@@ -10,9 +10,21 @@ create table pelicula (
     trama VARCHAR (700)
 )
 
-show tables
-
-describe pelicula
 use queveohoy;
 
-select * from pelicula;
+create table genero (
+      id int AUTO_INCREMENT PRIMARY KEY,
+      nombre VARCHAR(30) NOT NULL
+);
+
+
+show tables;
+use queveohoy;
+describe genero;
+
+use queveohoy;
+ALTER TABLE pelicula
+ADD genero_id int ;
+
+ALTER TABLE pelicula
+ADD FOREIGN KEY (genero_id) REFERENCES genero(id);
