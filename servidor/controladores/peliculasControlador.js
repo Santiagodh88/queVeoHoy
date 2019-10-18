@@ -23,8 +23,10 @@ function pelicula(req, res) {
 
 function resolverQuery(query) {
     var queryfinal = "select poster, trama, titulo, id from pelicula ";
-    var inicio = parseInt(query.pagina) - 1;
     var queryWhere = "";
+    var inicio = parseInt(query.pagina) - 1;
+    var queryOrder = " order by " + query.columna_orden + " " + query.tipo_orden;
+    var queryLimit = " limit " + inicio + "," + query.cantidad;
 
     for (const prop in query) {
         switch (prop) {
@@ -46,12 +48,10 @@ function resolverQuery(query) {
         queryWhere = " where " + queryWhere;
     }
 
-    var queryOrder = " order by " + query.columna_orden + " " + query.tipo_orden;
-    var queryLimit = " limit " + inicio + "," + query.cantidad;
-    //console.log(queryfinal.concat(queryWhere, queryOrder, queryLimit))
-    return queryfinal.concat(queryOrder, queryLimit);
-}
 
+    //console.log(queryfinal.concat(queryWhere, queryOrder, queryLimit))
+    return queryfinal.concat(queryWhere, queryOrder, queryLimit);
+}
 
 function genero(req, res) {
     var data = {}
