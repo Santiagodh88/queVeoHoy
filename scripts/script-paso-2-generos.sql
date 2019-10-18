@@ -1,3 +1,4 @@
+use queveohoy;
 INSERT INTO `genero` (`id`, `nombre`)
 VALUES
 	(1,'Action'),
