@@ -47,3 +47,19 @@ select poster, trama, titulo, id from pelicula
 use queveohoy;
 select * from pelicula
 limit 10, 10;
+
+
+CREATE TABLE actor (
+    id Int Not Null auto_increment,
+    nombre varchar(30) Not Null,
+    PRIMARY KEY (id)
+    );
+    
+CREATE TABLE actor_pelicula (
+    id Int Not Null auto_increment,
+    actor_id int,
+    pelicula_id int,
+    PRIMARY KEY (id),
+    FOREIGN KEY (actor_id) REFERENCES actor(id),
+    FOREIGN KEY (pelicula_id) REFERENCES pelicula(id)
+    );

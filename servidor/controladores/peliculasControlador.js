@@ -16,8 +16,41 @@ function pelicula(req, res) {
         data.peliculas = result;
         //console.log(req.query);
         //console.log(req.params);
+
+        //Calculo el total
+
+        /// Hay que arreglar para que funcione el callback de las funciones
+        /// de manera asincrona
+        var total = calcularTotalQuery(req.query);
+        con.query(calcularTotalQuery, (error, result) => {
+
+            if (error) {
+                console.log("Hubo un error en la consulta", error.message);
+                return res.status(404).send("Hubo un error en la consulta");
+            }
+
+            data.total = result;
+            //console.log(result);
+        });
+
+
         res.json(data)
     });
+
+}
+
+function calcularTotalQuery(query) {
+    var queryfinal = "select count (*) as total from pelicula ";
+    var queryWhere = "";
+    var inicio = parseInt(query.cantidad) * (parseInt(query.pagina) - 1);
+    var queryOrder = " order by " + query.columna_orden + " " + query.tipo_orden;
+    var queryLimit = " limit " + inicio + "," + query.cantidad;
+
+    queryWhere = agregarWheres(query);
+
+    console.log(queryfinal.concat(queryWhere, queryOrder, queryLimit))
+    return queryfinal.concat(queryWhere, queryOrder, queryLimit);
+
 
 }
 
@@ -28,6 +61,14 @@ function resolverQuery(query) {
     var queryOrder = " order by " + query.columna_orden + " " + query.tipo_orden;
     var queryLimit = " limit " + inicio + "," + query.cantidad;
 
+    queryWhere = agregarWheres(query);
+
+    //console.log(queryfinal.concat(queryWhere, queryOrder, queryLimit))
+    return queryfinal.concat(queryWhere, queryOrder, queryLimit);
+}
+
+function agregarWheres(query) {
+    let queryWhere = "";
     for (const prop in query) {
         switch (prop) {
             case "titulo":
@@ -48,9 +89,7 @@ function resolverQuery(query) {
         queryWhere = " where " + queryWhere;
     }
 
-
-    //console.log(queryfinal.concat(queryWhere, queryOrder, queryLimit))
-    return queryfinal.concat(queryWhere, queryOrder, queryLimit);
+    return queryWhere;
 }
 
 function genero(req, res) {
