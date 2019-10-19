@@ -24,7 +24,7 @@ function pelicula(req, res) {
 function resolverQuery(query) {
     var queryfinal = "select poster, trama, titulo, id from pelicula ";
     var queryWhere = "";
-    var inicio = parseInt(query.pagina) - 1;
+    var inicio = parseInt(query.cantidad) * (parseInt(query.pagina) - 1);
     var queryOrder = " order by " + query.columna_orden + " " + query.tipo_orden;
     var queryLimit = " limit " + inicio + "," + query.cantidad;
 
