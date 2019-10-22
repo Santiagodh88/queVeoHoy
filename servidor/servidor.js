@@ -19,6 +19,7 @@ app.get("/peliculas", peliculasCtrl.pelicula);
 
 app.get("/generos", peliculasCtrl.genero);
 
+app.get('/peliculas/:id', peliculasCtrl.buscarInfoPelicula);
 
 
 //seteamos el puerto en el cual va a escuchar los pedidos la aplicación
