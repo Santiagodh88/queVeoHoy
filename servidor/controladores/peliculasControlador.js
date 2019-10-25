@@ -10,7 +10,7 @@ function pelicula(req, res) {
 
         if (error) {
             console.log("Hubo un error en la consulta", error.message);
-            return res.status(404).send("Hubo un error en la consulta");
+            return res.status(500).send("Hubo un error en la consulta");
         }
 
         data.peliculas = result;
@@ -26,7 +26,7 @@ function pelicula(req, res) {
 
             if (error) {
                 console.log("Hubo un error en la consulta", error.message);
-                return res.status(404).send("Hubo un error en la consulta");
+                return res.status(500).send("Hubo un error en la consulta");
             }
 
             data.total = result[0].total;
@@ -95,7 +95,7 @@ function genero(req, res) {
 
         if (error) {
             console.log("Hubo un error en la consulta", error.message);
-            return res.status(404).send("Hubo un error en la consulta");
+            return res.status(500).send("Hubo un error en la consulta");
         }
 
         data.generos = result;
@@ -112,7 +112,7 @@ function buscarInfoPelicula(req, res) {
 
         if (error) {
             console.log("Hubo un error en la consulta", error.message);
-            return res.status(404).send("Hubo un error en la consulta");
+            return res.status(500).send("Hubo un error en la consulta");
         }
 
 
@@ -142,8 +142,67 @@ function buscarPeliculaQuery(id) {
 
 }
 
+
+function recomendaciones(req, res) {
+    var consulta = recomendarQuery(req.query);
+
+    con.query(consulta, (error, result) => {
+
+        if (error) {
+            console.log("Hubo un error en la consulta", error.message);
+            return res.status(500).send("Hubo un error en la consulta");
+        }
+
+        var response = {
+            'peliculas': result
+
+        };
+
+        res.json(response)
+    });
+
+}
+
+function recomendarQuery(query) {
+    var queryfinal = "select p.poster, p.trama, p.titulo, g.nombre from pelicula p, genero g";
+    var queryWhere = "";
+    queryWhere = recomendacionWheres(query);
+    return queryfinal.concat(queryWhere);
+}
+
+
+function recomendacionWheres(query) {
+    let queryWhere = "";
+    for (const prop in query) {
+        switch (prop) {
+            case "genero":
+                queryWhere += !queryWhere ? " g.id = p.genero_id and g.nombre like '%" + query.genero + "%' " : " and  g.id = p.id and g.nombre like '%" + query.genero + "%' ";
+                break;
+            case "anio_inicio":
+                queryWhere += !queryWhere ? " anio >= " + query.anio_inicio : " and anio >= " + query.anio_inicio;
+                break;
+            case "anio_fin":
+                queryWhere += !queryWhere ? " anio <= " + query.anio_fin : " and anio <= " + query.anio_fin;
+                break;
+            case "puntuacion":
+                queryWhere += !queryWhere ? " puntuacion >= " + query.puntuacion : " and puntuacion >= " + query.puntuacion;
+                break;
+            default:
+                break;
+        }
+    }
+
+    if (queryWhere) {
+        queryWhere = " where " + queryWhere;
+    }
+
+    return queryWhere;
+}
+
+
 module.exports = {
     pelicula,
     genero,
-    buscarInfoPelicula
+    buscarInfoPelicula,
+    recomendaciones
 };
